@@ -1,1 +1,5 @@
-print("Hello, world!")
+import XMLJsonCore
+
+XMLJsonCommand.main()
+
+

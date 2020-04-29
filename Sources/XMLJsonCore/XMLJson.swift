@@ -19,7 +19,7 @@ public struct  XMLJsonCommand: ParsableCommand {
     @Option(name: .shortAndLong, parsing: .upToNextOption, help: "XML files to be parsed.")
     var files: [String]
     
-    @Option(name: .shortAndLong, help: "JSON file(s) output directory.")
+    @Option(name: .shortAndLong, help: "[Optinal] JSON file(s) output directory.")
     private var output: String?
     
     @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
@@ -31,16 +31,30 @@ public struct  XMLJsonCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Convert all XML files present in the specifed directory.")
     var all: Bool
     
+   
+    
     public func run() throws {
         
         guard !dir.isEmpty  else {
             throw XMLJsonError.invlaidInput
         }
-        let parser = Parser(files: [dir], output: output, merge: merge, all: all)
-        try parser.parse()
-        let path = Path(dir)
-        print(path.type)
         
+        if all {
+            let path = Path(dir, outputPath: output ?? "")
+            try parse(from: path)
+        
+        } else {
+            guard !files.isEmpty else { throw XMLJsonError.shouldProvideFiles }
+            let path = Path(dir, files: files, outputPath: output ?? "")
+            try parse(from: path)
+        }
+    }
+    
+    func parse(from path: Path) throws {
+        let outputPath = output == nil ? path.baseUrl : path.outputUrl
+        print("parse:", path.filesUrls)
+        let parser = Parser(files: path.filesUrls, outputPath: outputPath, merge: merge)
+        try parser.parse()
     }
 }
 

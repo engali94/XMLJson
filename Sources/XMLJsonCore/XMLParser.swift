@@ -9,18 +9,37 @@ import Foundation
 import ArgumentParser
 
 class Parser: NSObject, XMLParserDelegate {
-    var parser: XMLParser!
-    var attributes: [String: String] = [:]
-    var lastElement: String = ""
-    var stack = Stack()
-    var xmlElement: XMLElement?
     
-    func viewDidLoad() {
-        let path = Bundle.main.url(forResource: "strings", withExtension: "xml")!
-        parser = XMLParser(contentsOf: path)
-        parser.delegate = self
-        parser.parse()
+    private var parser: XMLParser!
+    private var attributes: [String: String] = [:]
+    private var lastElement: String = ""
+    private var stack = Stack()
+    private var xmlElement: XMLElement?
+    
+    let files: [URL]
+    let outputPath: URL
+    
+    private var currentFile = ""
+    
+    init(files: [URL], outputPath: URL, merge: Bool) {
+        self.files = files
+        self.outputPath = outputPath
         
+        super.init()
+    }
+    
+    
+    func parse() throws {
+        
+        for file in files {
+            guard file.pathExtension == "xml" else { throw XMLJsonError.fileNameInvalid(file: file.lastPathComponent) }
+            currentFile =  file.lastPathComponent
+            parser = XMLParser(contentsOf: file)
+            parser.delegate = self
+            parser.parse()
+            
+        }
+        print("finshed!")
     }
         
     func parser(_ parser: XMLParser,
@@ -49,9 +68,10 @@ class Parser: NSObject, XMLParserDelegate {
         stack.pop()
     }
     
-  
     func parserDidEndDocument(_ parser: XMLParser) {
-        print("parserDidEndDocument")
-        print(stack.finalString)
+        // show debug info ike
+        // now parsing\(currentFile)...
+        print("✅ parserDidEndDocument", currentFile)
+       // print(stack.finalString)
     }
 }

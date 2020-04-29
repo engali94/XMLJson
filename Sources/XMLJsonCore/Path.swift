@@ -12,23 +12,38 @@ struct Path  {
     private let fileManager = FileManager.default
     public let directory: String
     public var files: [String]
+    public let outputPath: String
     
-    init(_ dir: String, files: [String]) {
+    init(_ dir: String, files: [String], outputPath: String) {
         self.directory = dir
         self.files = files
+        self.outputPath = outputPath
     }
     
-    private init (dir: String) {
+    private init (dir: String, outputPath: String) {
         self.directory = dir
-        files = []
+        self.outputPath = outputPath
+        self.files = []
     }
     
-    init(_ dir: String) {
-        self.init(dir: dir)
+    init(_ dir: String, outputPath: String) {
+        self.init(dir: dir, outputPath: outputPath)
         enumerateXMLFiles()
     }
     
-    mutating func enumerateXMLFiles() {
+    var baseUrl: URL {
+        return URL(fileURLWithPath: directory)
+    }
+    
+    var outputUrl: URL {
+        return URL(fileURLWithPath: outputPath)
+    }
+    
+    var filesUrls: [URL] {
+        return urlsFromFiles(files)
+    }
+    
+    mutating private func enumerateXMLFiles() {
         guard let files = fileManager.enumerator(at: baseUrl,
                                                  includingPropertiesForKeys: nil) else { return }
         for case let file as URL in files {
@@ -37,16 +52,8 @@ struct Path  {
         }
     }
     
-    func urlsFromFiles(_ files: [String]) -> [URL] {
-        return files.compactMap { URL(fileURLWithPath: self.directory + $0) }
-    }
-    
-    var baseUrl: URL {
-        return URL(fileURLWithPath: directory)
-    }
-    
-    var filesUrls: [URL] {
-        return urlsFromFiles(files)
+    private func urlsFromFiles(_ files: [String]) -> [URL] {
+        return files.compactMap { URL(fileURLWithPath: self.directory + "/" + $0) }
     }
     
 }
