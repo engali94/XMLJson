@@ -7,13 +7,14 @@ libdir = $(prefix)/lib
 REPODIR = $(shell pwd)
 BUILDDIR = $(REPODIR)/.build
 RELEASEDIR = $(BUILDDIR)/release
+SOURCES = $(wildcard $(srcdir)/**/*.swift)
 
 .DEFAULT_GOAL = all
 
 .PHONY: all
 all: xmljson install
 
-xmljson: 
+xmljson: $(SOURCES)
 	@swift build -c release --disable-sandbox --build-path "$(BUILDDIR)"
 
 install: xmljson
