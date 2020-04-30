@@ -3,6 +3,7 @@ SHELL = /bin/bash
 prefix ?= /usr/local
 bindir = $(prefix)/bin
 libdir = $(prefix)/lib
+srcdir = Sources
 
 REPODIR = $(shell pwd)
 BUILDDIR = $(REPODIR)/.build
@@ -15,7 +16,10 @@ SOURCES = $(wildcard $(srcdir)/**/*.swift)
 all: xmljson install
 
 xmljson: $(SOURCES)
-	@swift build -c release --disable-sandbox --build-path "$(BUILDDIR)"
+	@swift build \
+		-c release \
+		--disable-sandbox \
+		--build-path "$(BUILDDIR)"
 
 install: xmljson
 	@install "$(RELEASEDIR)/xmljson" "$(bindir)"
