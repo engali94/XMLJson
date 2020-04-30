@@ -26,7 +26,6 @@ final class XMLJsonTests: XCTestCase {
     
     func testParseAllCommand() throws {
        
-     
         let args = ["--dir", dirPath! ,"--all"]
         
         let parseCommand = try XMLJsonCommand.parseAsRoot(args)

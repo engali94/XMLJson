@@ -10,7 +10,7 @@ import TSCBasic
 
 public struct  XMLJsonCommand: ParsableCommand {
     
-    public static var configuration = CommandConfiguration(commandName: "XMLJson",abstract: "Convert XML Format to JSON Format.")
+    public static var configuration = CommandConfiguration(commandName: "xmljson",abstract: "Convert XML Format to JSON Format.")
     
     public init() { }
 
