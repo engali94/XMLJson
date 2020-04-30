@@ -22,9 +22,12 @@ xmljson: $(SOURCES)
 		--build-path "$(BUILDDIR)"
 
 install: xmljson
-	@install "$(RELEASEDIR)/xmljson" "$(bindir)"
-	@install "$(RELEASEDIR)/libSwiftToolsSupport.dylib" "$(libdir)"
-
+	#@install "$(RELEASEDIR)/xmljson" "$(bindir)"
+	#@install "$(RELEASEDIR)/libSwiftToolsSupport.dylib" "$(libdir)"
+	@install_name_tool -change \
+		".build/x86_64-apple-macosx10.10/release/libSwiftToolsSupport.dylib" \
+		"$(libdir)/libSwiftToolsSupport.dylib" \
+		"$(bindir)/xmljson"
 
 		echo "xmljson has been sucessfully installed."
 		
