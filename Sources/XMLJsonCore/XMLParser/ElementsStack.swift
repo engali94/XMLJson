@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 struct Stack {
     
     var elements: [XMLElement] = []

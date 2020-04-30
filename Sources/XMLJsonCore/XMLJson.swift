@@ -6,6 +6,7 @@
 //
 
 import ArgumentParser
+import TSCBasic
 
 public struct  XMLJsonCommand: ParsableCommand {
     
@@ -24,23 +25,23 @@ public struct  XMLJsonCommand: ParsableCommand {
     
     @Flag(name: .shortAndLong, help: "Show extra logging for debugging purposes.")
     var verbose: Bool
-    
-    @Flag(name: .shortAndLong, help: "Merge all converted XML files into one JSON file.")
-    var merge: Bool
+//
+//    @Flag(name: .shortAndLong, help: "Merge all converted XML files into one JSON file.")
+//    var merge: Bool
     
     @Flag(name: .shortAndLong, help: "Convert all XML files present in the specifed directory.")
     var all: Bool
     
-   
-    
     public func run() throws {
+        
+        Loger.isVerbose = verbose
         
         guard !dir.isEmpty  else {
             throw XMLJsonError.invlaidInput
         }
         
         if all {
-            let path = Path(dir, outputPath: output ?? "")
+            let path = Path(inputDir: dir, outputPath: output ?? "")
             try parse(from: path)
         
         } else {
@@ -52,8 +53,7 @@ public struct  XMLJsonCommand: ParsableCommand {
     
     func parse(from path: Path) throws {
         let outputPath = output == nil ? path.baseUrl : path.outputUrl
-        print("parse:", path.filesUrls)
-        let parser = Parser(files: path.filesUrls, outputPath: outputPath, merge: merge)
+        let parser = Parser(files: path.filesUrls, outputPath: outputPath)
         try parser.parse()
     }
 }

@@ -1,5 +1,3 @@
 import XMLJsonCore
 
 XMLJsonCommand.main()
-
-

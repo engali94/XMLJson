@@ -12,12 +12,13 @@ let package = Package(
         .executable(name: "XMLJson", targets: ["XMLJson"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.1")
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.1"),
+        .package(url: "https://github.com/apple/swift-tools-support-core.git", from: "0.0.1")
 
     ],
     targets: [
         .target(name: "XMLJson", dependencies: ["XMLJsonCore"]),
-        .target(name: "XMLJsonCore", dependencies: ["ArgumentParser"]),
+        .target(name: "XMLJsonCore", dependencies: ["ArgumentParser", "SwiftToolsSupport"]),
         .testTarget(name: "XMLJsonTests",dependencies: ["XMLJson"])
     ]
 )

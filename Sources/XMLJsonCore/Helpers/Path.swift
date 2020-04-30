@@ -26,17 +26,17 @@ struct Path  {
         self.files = []
     }
     
-    init(_ dir: String, outputPath: String) {
+    init(inputDir dir: String, outputPath: String) {
         self.init(dir: dir, outputPath: outputPath)
         enumerateXMLFiles()
     }
     
     var baseUrl: URL {
-        return URL(fileURLWithPath: directory)
+        return URL(fileURLWithPath: directory, isDirectory: true)
     }
     
     var outputUrl: URL {
-        return URL(fileURLWithPath: outputPath)
+        return URL(fileURLWithPath: outputPath, isDirectory: true)
     }
     
     var filesUrls: [URL] {
@@ -44,6 +44,7 @@ struct Path  {
     }
     
     mutating private func enumerateXMLFiles() {
+
         guard let files = fileManager.enumerator(at: baseUrl,
                                                  includingPropertiesForKeys: nil) else { return }
         for case let file as URL in files {

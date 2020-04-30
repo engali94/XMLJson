@@ -1,47 +1,124 @@
 import XCTest
 import class Foundation.Bundle
+@testable import XMLJsonCore
 
 final class XMLJsonTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-
-        // Some of the APIs that we use below are available in macOS 10.13 and above.
-        guard #available(macOS 10.13, *) else {
-            return
-        }
-
-        let fooBinary = productsDirectory.appendingPathComponent("XMLJson")
-
-        let process = Process()
-        process.executableURL = fooBinary
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)
-
-        XCTAssertEqual(output, "Hello, world!\n")
+ 
+    private let testDataPath = URL(fileURLWithPath: #file)
+        .deletingLastPathComponent()
+        .pathComponents
+        .prefix(while: { $0 != "Sources" })
+        .joined(separator: "/").dropFirst()
+    
+    private let fileManager = FileManager.default
+    private var dirPath: String!
+    
+    override func setUp() {
+        dirPath = String(testDataPath) + "/TestData"
     }
+    
+    func testPathCreation() {
 
-    /// Returns path to the built products directory.
-    var productsDirectory: URL {
-      #if os(macOS)
-        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
-            return bundle.bundleURL.deletingLastPathComponent()
-        }
-        fatalError("couldn't find the products directory")
-      #else
-        return Bundle.main.bundleURL
-      #endif
+        let path = Path(inputDir: dirPath, outputPath: dirPath)
+        XCTAssertEqual(path.baseUrl, URL(fileURLWithPath: dirPath, isDirectory: true))
+        XCTAssertEqual(path.outputUrl, URL(fileURLWithPath: dirPath, isDirectory: true))
+    }
+    
+    func testParseAllCommand() throws {
+       
+     
+        let args = ["--dir", dirPath! ,"--all"]
+        
+        let parseCommand = try XMLJsonCommand.parseAsRoot(args)
+        try parseCommand.run()
+        
+        XCTAssertTrue(isFileExists("1.json"))
+        XCTAssertTrue(isFileExists("2.json"))
+        
+        try jsonFileTest(file: "1.json", cattegory: "cooking", year: "2005")
+        try jsonFileTest(file: "2.json", cattegory: "web", year: "2003")
+        
+     
+        removeFiles(["1.json", "2.json"])
+    }
+    
+    func testParseOneComand() throws {
+        let args = ["--dir", dirPath! ,"-f", "1.xml"]
+               
+        let parseCommand = try XMLJsonCommand.parseAsRoot(args)
+        try parseCommand.run()
+        
+        XCTAssertTrue(isFileExists("1.json"))
+        
+        try jsonFileTest(file: "1.json", cattegory: "cooking", year: "2005")
+        removeFiles(["1.json"])
+    }
+    
+    func testFileNotFound() throws {
+        let args = ["--dir",dirPath! ,"-f", "1.xfl"]
+               
+        let parseCommand = try XMLJsonCommand.parseAsRoot(args)
+        XCTAssertThrowsError( try parseCommand.run())
     }
 
     static var allTests = [
-        ("testExample", testExample),
+         testPathCreation,
+         testParseAllCommand,
+         testParseOneComand,
     ]
 }
+
+private extension XMLJsonTests {
+    
+    private func isFileExists(_ name: String) -> Bool {
+        return fileManager.fileExists(atPath: dirPath + "/" + name)
+    }
+    
+    private func loadAndParseJson(from file: String) throws -> Book{
+        let url = try XCTUnwrap(URL(fileURLWithPath: dirPath + "/" + file))
+        let data = try Data(contentsOf: url)
+        let book = try JSONDecoder().decode([Book].self, from: data)
+        return book.first!
+    }
+    
+    private func jsonFileTest(file: String, cattegory: String, year: String) throws {
+        let book = try loadAndParseJson(from: file)
+        XCTAssertEqual(book.category, cattegory)
+        XCTAssertEqual(book.year, year)
+    }
+    
+    private func removeFiles(_ files: [String])  {
+        addTeardownBlock {
+            do {
+                for file in files {
+                    let filePath = self.dirPath + "/" + file
+                    
+                    if self.isFileExists(file) {
+                        try self.fileManager.removeItem(atPath: filePath)
+                    }
+                }
+            } catch {
+                XCTFail("Error while deleting the genetrated file: \(error)")
+            }
+        }
+    }
+
+}
+
+struct Book: Codable {
+
+    struct Title: Codable {
+        let lang: String
+        let text: String
+    }
+    
+    let author: String?
+    let category: String?
+    let price: String?
+    let title: Title?
+    let year: String?
+
+}
+
+
+
