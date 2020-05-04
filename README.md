@@ -1,3 +1,4 @@
+
 # XMLJSON
 A Swift command-line tool to easily convert XML format to JSON.
 
@@ -8,9 +9,11 @@ A Swift command-line tool to easily convert XML format to JSON.
   <img src="https://img.shields.io/badge/language-swift5.2-f48041.svg?style=flat"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat"/>
   <a href="https://twitter.com/alihilal94">
-      <img src="https://img.shields.io/badge/contact-@alihilal94-blue.svg?style=flat" alt="Twitter: @alihilal94" />
+  	<img src="https://img.shields.io/badge/contact-@alihilal94-blue.svg?style=flat" alt="Twitter: @alihilal94" />
   </a>
 </p>
+
+![demo](https://github.com/engali94/XMLJson/blob/master/assets/xmljsonDemo.gif)
 
 ### Requirements
 - Good Mood
@@ -119,9 +122,9 @@ $ make install
 - run `swift package generate-xcodeproj` 
 - Run the following command to try it out:
 
-    ```bash
-    swift run XMLJson --help
-    ```
+	```bash
+	swift run XMLJson --help
+	```
 
 ### License
 
