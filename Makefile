@@ -13,27 +13,34 @@ SOURCES = $(wildcard $(srcdir)/**/*.swift)
 .DEFAULT_GOAL = all
 
 .PHONY: all
-all: xmljson install
+all: install
 
 xmljson: $(SOURCES)
 	@swift build \
 		-c release \
 		--disable-sandbox \
 		--build-path "$(BUILDDIR)"
-
+.PHONY: install
 install: xmljson
-	#@install "$(RELEASEDIR)/xmljson" "$(bindir)"
-	#@install "$(RELEASEDIR)/libSwiftToolsSupport.dylib" "$(libdir)"
+	@install -d "$(bindir)" "$(libdir)"
+	@install "$(RELEASEDIR)/xmljson" "$(bindir)"
+	@install "$(RELEASEDIR)/libSwiftToolsSupport.dylib" "$(libdir)"
 	@install_name_tool -change \
 		".build/x86_64-apple-macosx10.10/release/libSwiftToolsSupport.dylib" \
 		"$(libdir)/libSwiftToolsSupport.dylib" \
 		"$(bindir)/xmljson"
 
-		echo "xmljson has been sucessfully installed."
-		
+	echo "xmljson has been sucessfully installed."
+
+.PHONY: uninstall
 uninstall:
 	@rm -rf "$(bindir)/xmljson"
 	@rm -rf "$(libdir)/libSwiftToolsSupport.dylib"
 
-clean:
+.PHONY: clean
+distclean:
+	@rm -f $(RELEASEDIR)
+
+.PHONY: clean
+clean: distclean
 	@rm -rf $(BUILDDIR)
