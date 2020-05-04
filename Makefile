@@ -13,7 +13,7 @@ SOURCES = $(wildcard $(srcdir)/**/*.swift)
 .DEFAULT_GOAL = all
 
 .PHONY: all
-all: install
+all: xmljson install
 
 xmljson: $(SOURCES)
 	@swift build \
