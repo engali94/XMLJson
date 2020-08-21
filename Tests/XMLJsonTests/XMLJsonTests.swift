@@ -69,24 +69,24 @@ final class XMLJsonTests: XCTestCase {
 
 private extension XMLJsonTests {
     
-    private func isFileExists(_ name: String) -> Bool {
+    func isFileExists(_ name: String) -> Bool {
         return fileManager.fileExists(atPath: dirPath + "/" + name)
     }
     
-    private func loadAndParseJson(from file: String) throws -> Book{
+    func loadAndParseJson(from file: String) throws -> Book{
         let url = try XCTUnwrap(URL(fileURLWithPath: dirPath + "/" + file))
         let data = try Data(contentsOf: url)
         let book = try JSONDecoder().decode([Book].self, from: data)
         return book.first!
     }
     
-    private func jsonFileTest(file: String, cattegory: String, year: String) throws {
+    func jsonFileTest(file: String, cattegory: String, year: String) throws {
         let book = try loadAndParseJson(from: file)
         XCTAssertEqual(book.category, cattegory)
         XCTAssertEqual(book.year, year)
     }
     
-    private func removeFiles(_ files: [String])  {
+    func removeFiles(_ files: [String])  {
         addTeardownBlock {
             do {
                 for file in files {
